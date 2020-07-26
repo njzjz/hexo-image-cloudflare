@@ -12,7 +12,7 @@ function cdn_link(link){
 	return cdn_prefix + full_url_for(link);
 }
 function replacer(match, p1, p2, offset, string) {
-	return util.format('[%s](%s)', p1, cdn_link(p2));
+	return util.format('![%s](%s)', p1, cdn_link(p2));
 }
 
 hexo.extend.filter.register('before_post_render', function(data){
