@@ -1,0 +1,41 @@
+Arguments: 
+  /home/jz748/anaconda3/envs/conda-forge/bin/node /home/jz748/anaconda3/envs/conda-forge/bin/yarn.js add hexo-utils
+
+PATH: 
+  /home/jz748/anaconda3/envs/conda-forge/bin:/home/jz748/devel/git/Management/LaTeX/bin:/home/jz748/anaconda3/bin:/home/jz748/anaconda3/condabin:/home/jz748/.local/bin:/home/jz748/bin:/usr/lib64/qt-3.3/bin:/usr/share/Modules/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/jzzeng/devel/git/Management/Bibliography:/home/jz748/devel/git/Management/Bibliography:/home/jz748/devel/git/Management/Git:/home/jz748/devel/git/Management/Software:/home/jz748/devel/git/Admin/Git
+
+Yarn version: 
+  1.22.0
+
+Node version: 
+  14.6.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/hexo-utils: Not found
+      at Request.params.callback [as _callback] (/home/jz748/anaconda3/envs/conda-forge/lib/cli.js:66975:18)
+      at Request.self.callback (/home/jz748/anaconda3/envs/conda-forge/lib/cli.js:140727:22)
+      at Request.emit (events.js:314:20)
+      at Request.<anonymous> (/home/jz748/anaconda3/envs/conda-forge/lib/cli.js:141699:10)
+      at Request.emit (events.js:314:20)
+      at IncomingMessage.<anonymous> (/home/jz748/anaconda3/envs/conda-forge/lib/cli.js:141621:12)
+      at Object.onceWrapper (events.js:420:28)
+      at IncomingMessage.emit (events.js:326:22)
+      at endReadableNT (_stream_readable.js:1244:12)
+      at processTicksAndRejections (internal/process/task_queues.js:80:21)
+
+npm manifest: 
+  {
+    "name": "chemicaltools",
+    "version": "1.2.16",
+    "description": "Chemical Tools for Chemistry students.",
+    "main": "index.js"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
