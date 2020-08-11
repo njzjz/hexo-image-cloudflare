@@ -7,6 +7,7 @@ const full_url_for = require('hexo-util').full_url_for.bind(hexo);
 const util = require('util');
 var cdn_server = hexo.config.cdn_server || "https://images.weserv.nl";
 var cdn_prefix = cdn_server + "/?url=";
+var use_webp = hexo.config.cdn_use_webp || false;
 
 function cdn_link(link){
 	return cdn_prefix + full_url_for(link);
@@ -21,3 +22,20 @@ hexo.extend.filter.register('before_post_render', function(data){
 	data.content = data.content.replace(reg, replacer);
 	return data;
 });
+
+if (use_webp){
+	hexo.extend.filter.register('after_render:html', function(htmlContent){
+		var reg = /<img(.*?)src="(.*?)"(.*?)>/gi;
+		return htmlContent.replace(reg, function(str, p1, p2) {
+			if(/webp-comp/gi.test(p1) || !str.startsWith(cdn_prefix){
+				return str;
+			}
+			return `<picture>
+				<source srcset="${p2}&format=webp" type="image/webp">
+				<source srcset="${p2}&format=png" type="image/png">
+				${str.replace('<img', '<img webp-comp')}
+			</picture>`
+		});
+	});
+}
+
