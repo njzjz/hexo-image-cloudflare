@@ -27,14 +27,14 @@ if (use_webp){
 	hexo.extend.filter.register('after_render:html', function(htmlContent){
 		var reg = /<img(.*?)src="(.*?)"(.*?)>/gi;
 		return htmlContent.replace(reg, function(str, p1, p2) {
-			if(/webp-comp/gi.test(p1) || !p2.startsWith(cdn_prefix){
+			if(/webp-comp/gi.test(p1) || !p2.startsWith(cdn_prefix)){
 				return str;
 			}
 			return `<picture>
 				<source srcset="${p2}&format=webp" type="image/webp">
 				<source srcset="${p2}&format=png" type="image/png">
 				${str.replace('<img', '<img webp-comp')}
-			</picture>`
+			</picture>`;
 		});
 	});
 }
