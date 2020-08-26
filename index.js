@@ -10,7 +10,7 @@ var cdn_prefix = cdn_server + "/?url=";
 var use_webp = hexo.config.cdn_use_webp || false;
 
 function cdn_link(link){
-	return cdn_prefix + full_url_for(link);
+	return cdn_prefix + full_url_for(link) + "&default=" + full_url_for(link);
 }
 function replacer(match, p1, p2, offset, string) {
 	return util.format('![%s](%s)', p1, cdn_link(p2));
