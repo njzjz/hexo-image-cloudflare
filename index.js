@@ -31,8 +31,8 @@ if (use_webp){
 				return str;
 			}
 			return `<picture>
-				<source srcset="${p2}&format=webp" type="image/webp">
-				<source srcset="${p2}&format=png" type="image/png">
+				<source srcset="${p2}&output=webp" type="image/webp">
+				<source srcset="${p2}&output=png" type="image/png">
 				${str.replace('<img', '<img webp-comp')}
 			</picture>`;
 		});
