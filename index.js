@@ -4,13 +4,14 @@
  * */
 
 const full_url_for = require('hexo-util').full_url_for.bind(hexo);
+const encodeURL = require('hexo-util').encodeURL;
 const util = require('util');
-var cdn_server = hexo.config.cdn_server || "https://images.weserv.nl";
+var cdn_server = hexo.config.cdn_server || (hexo.config.cdn && hexo.config.cdn.server) || "https://images.weserv.nl";
 var cdn_prefix = cdn_server + "/?url=";
-var use_webp = hexo.config.cdn_use_webp || false;
+var use_webp = hexo.config.cdn_use_webp || (hexo.config.cdn && hexo.config.cdn.use_webp) || false;
 
 function cdn_link(link){
-	return cdn_prefix + full_url_for(link) + "&default=" + full_url_for(link);
+	return cdn_prefix + encodeURL(full_url_for(link)) + "&default=" + encodeURL(full_url_for(link));
 }
 function replacer(match, p1, p2, offset, string) {
 	return util.format('![%s](%s)', p1, cdn_link(p2));

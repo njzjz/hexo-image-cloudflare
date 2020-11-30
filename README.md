@@ -39,9 +39,12 @@ where `https://your.blog` is the url of your blog that you set in `_config.yml`.
 
 ## Configuration
 
-You can custom the [CDN server url](https://github.com/weserv/images) in `_config.yml`, and the default value is `https://images.weserv.nl`:
+You can custom the [CDN server url](https://github.com/weserv/images) in `_config.yml`, and the default value is `https://images.weserv.nl`.
+Some other configurations are avaible.
 
 ```
-cdn_server: https://images.weserv.nl
+cdn:
+  server: https://images.weserv.nl
+  use_webp: false
 ```
 
