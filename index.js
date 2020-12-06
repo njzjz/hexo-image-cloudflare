@@ -16,6 +16,8 @@ function replacer(match, p1, p2, offset, string) {
 	return util.format('![%s](%s)', p1, cdn_link(p2));
 }
 
+hexo.extend.injector.register('head_begin', `<link rel="preconnect" href="${cdn_server}" crossorigin>`);
+
 hexo.extend.filter.register('before_post_render', function(data){
 	var reg = /!\[(.*)\]\((.*)\)/g;
 	data.cover && (data.cover = cdn_link(data.cover));
