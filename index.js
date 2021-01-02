@@ -5,15 +5,42 @@
 
 const full_url_for = require('hexo-util').full_url_for.bind(hexo);
 const util = require('util');
+const url = require("url");
+const querystring = require('querystring');
 var cdn_server = hexo.config.cdn_server || (hexo.config.cdn && hexo.config.cdn.server) || "https://images.weserv.nl";
-var cdn_prefix = cdn_server + "/?url=";
+var cdn_prefix = cdn_server + "/?";
 var use_webp = hexo.config.cdn_use_webp || (hexo.config.cdn && hexo.config.cdn.use_webp) || false;
+var max_width = hexo.config.cdn && hexo.config.cdn.max_width;
 
-function cdn_link(link){
-	return cdn_prefix + encodeURIComponent(full_url_for(link)) + "&default=" + encodeURIComponent(full_url_for(link));
+function cdn_link(link, output=null, max_width=null){
+  var obj = {
+    url: full_url_for(link),
+    default: full_url_for(link)
+  }
+  if(output){
+    obj.output = output;
+  }
+  if(max_width){
+    obj.w = max_width;
+    obj.we = '';
+  }
+	return cdn_prefix + querystring.stringify(obj);
 }
+
+function parse_url(link){
+  return url.parse(link, true).query.url;
+}
+
 function replacer(match, p1, p2, offset, string) {
 	return util.format('![%s](%s)', p1, cdn_link(p2));
+}
+
+function source_tag(link, type=null){
+  if(type){
+    return `<source srcset="${link}" type="${type}">`;
+  }else{
+    return `<source srcset="${link}">`;
+  }
 }
 
 hexo.extend.injector.register('head_begin', `<link rel="preconnect" href="${cdn_server}">`);
@@ -25,17 +52,23 @@ hexo.extend.filter.register('before_post_render', function(data){
 	return data;
 });
 
-if (use_webp){
+if (use_webp || max_width){
 	hexo.extend.filter.register('after_render:html', function(htmlContent){
 		var reg = /<img(.*?)src="(.*?)"(.*?)>/gi;
 		return htmlContent.replace(reg, function(str, p1, p2) {
 			if(/webp-comp/gi.test(p1) || !p2.startsWith(cdn_prefix)){
 				return str;
 			}
-			return `<picture>
-				<source srcset="${p2}&output=webp" type="image/webp">
-				<source srcset="${p2}&output=png" type="image/png">
-				${str.replace('<img', '<img webp-comp')}
+      var link = parse_url(p2);
+      var source_str = "";
+      if(use_webp){
+        source_str += source_tag(cdn_link(link, output='webp', max_width = max_width), type='image/webp');
+        source_str += source_tag(cdn_link(link, output='png', max_width = max_width), type='image/png');
+      } else {
+        source_str += source_tag(cdn_link(link, max_width = max_width));
+      }
+			return `<picture>${source_str}
+				${str.replace('<img', `<img webp-comp data-zoom-src="${p2}"`)}
 			</picture>`;
 		});
 	});
