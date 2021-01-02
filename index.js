@@ -68,7 +68,7 @@ if (use_webp || max_width){
         source_str += source_tag(cdn_link(link, max_width = max_width));
       }
 			return `<picture>${source_str}
-				${str.replace('<img', '<img webp-comp')}
+				${str.replace('<img', `<img webp-comp data-zoom-src="${p2}"`)}
 			</picture>`;
 		});
 	});
