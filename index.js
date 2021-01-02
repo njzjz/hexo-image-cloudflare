@@ -37,9 +37,9 @@ function replacer(match, p1, p2, offset, string) {
 
 function source_tag(link, type=null){
   if(type){
-    return `<source srcset="${p2}" type="${type}">`;
+    return `<source srcset="${link}" type="${type}">`;
   }else{
-    return `<source srcset="${p2}">`;
+    return `<source srcset="${link}">`;
   }
 }
 
