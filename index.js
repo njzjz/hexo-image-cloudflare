@@ -62,10 +62,10 @@ if (use_webp || max_width){
       var link = parse_url(p2);
       var source_str = "";
       if(use_webp){
-        source_str += source_tag(cdn_link(p2, output='webp', max_width = max_width), type='image/webp');
-        source_str += source_tag(cdn_link(p2, output='png', max_width = max_width), type='image/png');
+        source_str += source_tag(cdn_link(link, output='webp', max_width = max_width), type='image/webp');
+        source_str += source_tag(cdn_link(link, output='png', max_width = max_width), type='image/png');
       } else {
-        source_str += source_tag(cdn_link(p2, max_width = max_width));
+        source_str += source_tag(cdn_link(link, max_width = max_width));
       }
 			return `<picture>${source_str}
 				${str.replace('<img', '<img webp-comp')}
