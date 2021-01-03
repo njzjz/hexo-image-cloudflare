@@ -33,7 +33,7 @@ function cdn_link(link, output=null, width=null){
   if(output){
     obj.output = output;
   }
-  if(max_width){
+  if(width){
     obj.w = width;
     obj.we = '';
   }
@@ -54,7 +54,7 @@ function source_tag(link, type=null, width=null){
   if(type){
     obj.type = "image/" + type;
   }
-  if(max_width){
+  if(width){
     obj.media = `(max-width: ${width}px)`;
   }
   return tag('source', obj);
