@@ -19,7 +19,7 @@ if(typeof max_width == "number"){
   max_widths = [max_width];
 } else if(max_width){
   max_widths = max_width;
-  max_widths.sort(function(a, b){return a - b});
+  max_widths.sort(function(a, b){return b - a});
 } else {
   max_widths = [];
 }
