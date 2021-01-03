@@ -7,12 +7,25 @@ const full_url_for = require('hexo-util').full_url_for.bind(hexo);
 const util = require('util');
 const url = require("url");
 const querystring = require('querystring');
-var cdn_server = hexo.config.cdn_server || (hexo.config.cdn && hexo.config.cdn.server) || "https://images.weserv.nl";
-var cdn_prefix = cdn_server + "/?";
-var use_webp = hexo.config.cdn_use_webp || (hexo.config.cdn && hexo.config.cdn.use_webp) || false;
-var max_width = hexo.config.cdn && hexo.config.cdn.max_width;
+const tag = require('html-tag');
+const cdn_server = hexo.config.cdn_server || (hexo.config.cdn && hexo.config.cdn.server) || "https://images.weserv.nl";
+const cdn_prefix = cdn_server + "/?";
+const use_webp = hexo.config.cdn_use_webp || (hexo.config.cdn && hexo.config.cdn.use_webp) || false;
+const max_width = hexo.config.cdn && hexo.config.cdn.max_width;
 
-function cdn_link(link, output=null, max_width=null){
+var max_widths;
+// convert number to list
+if(typeof max_width == "number"){
+  max_widths = [max_width];
+} else if(max_width){
+  max_widths = max_width;
+  max_widths.sort(function(a, b){return b - a});
+} else {
+  max_widths = [];
+}
+max_widths.push(null);
+
+function cdn_link(link, output=null, width=null){
   var obj = {
     url: full_url_for(link),
     default: full_url_for(link)
@@ -20,8 +33,8 @@ function cdn_link(link, output=null, max_width=null){
   if(output){
     obj.output = output;
   }
-  if(max_width){
-    obj.w = max_width;
+  if(width){
+    obj.w = width;
     obj.we = '';
   }
 	return cdn_prefix + querystring.stringify(obj);
@@ -36,11 +49,18 @@ function replacer(match, p1, p2, offset, string) {
 }
 
 function source_tag(link, type=null){
-  if(type){
-    return `<source srcset="${link}" type="${type}">`;
-  }else{
-    return `<source srcset="${link}">`;
+  var obj = {};
+  var urlwidth = [];
+  for(let ii=0; ii<max_widths.length; ii++){
+    let new_link = cdn_link(link, output=type, width = max_widths[ii]);
+    var uw = max_widths[ii] ? `${new_link} ${max_widths[ii]}w` : new_link ;
+    urlwidth.push(uw);
   }
+  obj.srcset=urlwidth.join();
+  if(type){
+    obj.type = "image/" + type;
+  }
+  return tag('source', obj);
 }
 
 hexo.extend.injector.register('head_begin', `<link rel="preconnect" href="${cdn_server}">`);
@@ -62,10 +82,10 @@ if (use_webp || max_width){
       var link = parse_url(p2);
       var source_str = "";
       if(use_webp){
-        source_str += source_tag(cdn_link(link, output='webp', max_width = max_width), type='image/webp');
-        source_str += source_tag(cdn_link(link, output='png', max_width = max_width), type='image/png');
+        source_str += source_tag(link, type='webp');
+        source_str += source_tag(link, type='png');
       } else {
-        source_str += source_tag(cdn_link(link, max_width = max_width));
+        source_str += source_tag(link);
       }
 			return `<picture>${source_str}
 				${str.replace('<img', `<img webp-comp data-zoom-src="${p2}"`)}
