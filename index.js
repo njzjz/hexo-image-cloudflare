@@ -8,22 +8,23 @@ const util = require('util');
 const url = require("url");
 const querystring = require('querystring');
 const tag = require('html-tag');
-var cdn_server = hexo.config.cdn_server || (hexo.config.cdn && hexo.config.cdn.server) || "https://images.weserv.nl";
-var cdn_prefix = cdn_server + "/?";
-var use_webp = hexo.config.cdn_use_webp || (hexo.config.cdn && hexo.config.cdn.use_webp) || false;
-var max_width = hexo.config.cdn && hexo.config.cdn.max_width;
+const cdn_server = hexo.config.cdn_server || (hexo.config.cdn && hexo.config.cdn.server) || "https://images.weserv.nl";
+const cdn_prefix = cdn_server + "/?";
+const use_webp = hexo.config.cdn_use_webp || (hexo.config.cdn && hexo.config.cdn.use_webp) || false;
+const max_width = hexo.config.cdn && hexo.config.cdn.max_width;
 
+var max_widths;
 // convert number to list
 if(typeof max_width == "number"){
-  max_width = [max_width];
+  max_widths = [max_width];
 } else if(max_width){
-  max_width.sort(function(a, b){return b - a});
+  max_widths.sort(function(a, b){return b - a});
 } else {
-  max_width = [];
+  max_widths = [];
 }
-max_width.push(null);
+max_widths.push(null);
 
-function cdn_link(link, output=null, max_width=null){
+function cdn_link(link, output=null, width=null){
   var obj = {
     url: full_url_for(link),
     default: full_url_for(link)
@@ -32,7 +33,7 @@ function cdn_link(link, output=null, max_width=null){
     obj.output = output;
   }
   if(max_width){
-    obj.w = max_width;
+    obj.w = width;
     obj.we = '';
   }
 	return cdn_prefix + querystring.stringify(obj);
@@ -46,14 +47,14 @@ function replacer(match, p1, p2, offset, string) {
 	return util.format('![%s](%s)', p1, cdn_link(p2));
 }
 
-function source_tag(link, type=null, max_width=null){
-  var new_link = cdn_link(link, output=type, max_width = max_width);
+function source_tag(link, type=null, width=null){
+  var new_link = cdn_link(link, output=type, width = width);
   var obj = {srcset: new_link};
   if(type){
     obj.type = "image/" + type;
   }
   if(max_width){
-    obj.media = `(max-width: ${max_width}px)`;
+    obj.media = `(max-width: ${width}px)`;
   }
   return tag('source', obj);
 }
@@ -76,12 +77,12 @@ if (use_webp || max_width){
 			}
       var link = parse_url(p2);
       var source_str = "";
-      for(var ii=0; ii<max_width.length; ii++){
+      for(let ii=0; ii<max_widths.length; ii++){
         if(use_webp){
-          source_str += source_tag(link, type='webp', max_width = max_width[ii]);
-          source_str += source_tag(link, type='png', max_width = max_width[ii]);
+          source_str += source_tag(link, type='webp', width = max_widths[ii]);
+          source_str += source_tag(link, type='png', width = max_widths[ii]);
         } else {
-          source_str += source_tag(link, max_width = max_width[ii]);
+          source_str += source_tag(link, width = max_widths[ii]);
         }
       }
 			return `<picture>${source_str}
