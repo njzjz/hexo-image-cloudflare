@@ -48,14 +48,17 @@ function replacer(match, p1, p2, offset, string) {
 	return util.format('![%s](%s)', p1, cdn_link(p2));
 }
 
-function source_tag(link, type=null, width=null){
-  var new_link = cdn_link(link, output=type, width = width);
-  var obj = {srcset: new_link};
+function source_tag(link, type=null){
+  var obj = {};
+  var urlwidth = [];
+  for(let ii=0; ii<max_widths.length; ii++){
+    let new_link = cdn_link(link, output=type, width = max_widths[ii]);
+    var uw = max_widths[ii] ? `${new_link} ${max_widths[ii]}w` : new_link ;
+    urlwidth.push(uw);
+  }
+  obj.srcset=urlwidth.join();
   if(type){
     obj.type = "image/" + type;
-  }
-  if(width){
-    obj.media = `(max-width: ${width}px)`;
   }
   return tag('source', obj);
 }
@@ -78,13 +81,11 @@ if (use_webp || max_width){
 			}
       var link = parse_url(p2);
       var source_str = "";
-      for(let ii=0; ii<max_widths.length; ii++){
-        if(use_webp){
-          source_str += source_tag(link, type='webp', width = max_widths[ii]);
-          source_str += source_tag(link, type='png', width = max_widths[ii]);
-        } else {
-          source_str += source_tag(link, width = max_widths[ii]);
-        }
+      if(use_webp){
+        source_str += source_tag(link, type='webp');
+        source_str += source_tag(link, type='png');
+      } else {
+        source_str += source_tag(link);
       }
 			return `<picture>${source_str}
 				${str.replace('<img', `<img webp-comp data-zoom-src="${p2}"`)}
