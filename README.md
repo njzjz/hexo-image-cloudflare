@@ -47,5 +47,6 @@ cdn:
   server: https://images.weserv.nl
   use_webp: false
   max_width:
+  exclude_domains:
 ```
 

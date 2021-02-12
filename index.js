@@ -12,6 +12,7 @@ const cdn_server = hexo.config.cdn_server || (hexo.config.cdn && hexo.config.cdn
 const cdn_prefix = cdn_server + "/?";
 const use_webp = hexo.config.cdn_use_webp || (hexo.config.cdn && hexo.config.cdn.use_webp) || false;
 const max_width = hexo.config.cdn && hexo.config.cdn.max_width;
+const exclude_domains = hexo.config.cdn && hexo.config.cdn.exclude_domains;
 
 var max_widths;
 // convert number to list
@@ -26,6 +27,10 @@ if (typeof max_width == "number") {
 max_widths.push(null);
 
 function cdn_link(link, output = null, width = null) {
+  if(exclude_domains.some((domain) => link.startsWith(domain))){
+    // skip using cdns
+    return link;
+  }
   var obj = {
     url: full_url_for(link),
     default: full_url_for(link)
