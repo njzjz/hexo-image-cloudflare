@@ -44,10 +44,6 @@ function parse_url(link) {
   return url.parse(link, true).query.url;
 }
 
-function replacer(match, p1, p2, offset, string) {
-  return util.format('![%s](%s)', p1, cdn_link(p2));
-}
-
 function source_tag(link, type = null) {
   var obj = {};
   var urlwidth = [];
@@ -66,15 +62,25 @@ function source_tag(link, type = null) {
 hexo.extend.injector.register('head_begin', `<link rel="preconnect" href="${cdn_server}">`);
 
 hexo.extend.filter.register('before_post_render', function (data) {
-  var reg = /!\[(.*)\]\((.*)\)/g;
+  const reg = /!\[(.*?)\]\((.*?)\)/g;
   data.cover && (data.cover = cdn_link(data.cover));
-  data.content = data.content.replace(reg, replacer);
+  data.content = data.content.replace(reg, function (str, p1, p2) {
+    return util.format('![%s](%s)', p1, cdn_link(p2));
+  });
+  return data;
+});
+
+hexo.extend.filter.register('after_post_render', function (data) {
+  const reg = /background\-image:(\s*?)url\((.*?)\)/g;
+  data.content = data.content.replace(reg, function (str, p1, p2) {
+    return util.format('background-image:%surl(%s)', p1, cdn_link(p2));
+  });
   return data;
 });
 
 if (use_webp || max_width) {
   hexo.extend.filter.register('after_render:html', function (htmlContent) {
-    var reg = /<img(.*?)src="(.*?)"(.*?)>/gi;
+    const reg = /<img(.*?)src="(.*?)"(.*?)>/gi;
     return htmlContent.replace(reg, function (str, p1, p2) {
       if (/webp-comp/gi.test(p1) || !p2.startsWith(cdn_prefix)) {
         return str;
