@@ -27,7 +27,7 @@ if (typeof max_width == "number") {
 max_widths.push(null);
 
 function cdn_link(link, output = null, width = null) {
-  if(exclude_domains.some((domain) => link.startsWith(domain))){
+  if(exclude_domains && exclude_domains.some((domain) => link.startsWith(domain))){
     // skip using cdns
     return link;
   }
