@@ -13,6 +13,7 @@ const cdn_prefix = cdn_server + "/?";
 const use_webp = hexo.config.cdn_use_webp || (hexo.config.cdn && hexo.config.cdn.use_webp) || false;
 const max_width = hexo.config.cdn && hexo.config.cdn.max_width;
 const exclude_domains = hexo.config.cdn && hexo.config.cdn.exclude_domains;
+const { unescapeHTML } = require('hexo-util');
 
 var max_widths;
 // convert number to list
@@ -78,7 +79,7 @@ hexo.extend.filter.register('before_post_render', function (data) {
 hexo.extend.filter.register('after_post_render', function (data) {
   const reg = /background\-image:(\s*?)url\((.*?)\)/g;
   data.content = data.content.replace(reg, function (str, p1, p2) {
-    return util.format('background-image:%surl(%s)', p1, cdn_link(decodeURI(p2)));
+    return util.format('background-image:%surl(%s)', p1, cdn_link(unescapeHTML(p2)));
   });
   return data;
 });
