@@ -78,7 +78,7 @@ hexo.extend.filter.register('before_post_render', function (data) {
 hexo.extend.filter.register('after_post_render', function (data) {
   const reg = /background\-image:(\s*?)url\((.*?)\)/g;
   data.content = data.content.replace(reg, function (str, p1, p2) {
-    return util.format('background-image:%surl(%s)', p1, cdn_link(p2));
+    return util.format('background-image:%surl(%s)', p1, cdn_link(decodeURI(p2)));
   });
   return data;
 });
