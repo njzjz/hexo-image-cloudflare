@@ -1,6 +1,6 @@
 {
   "name": "hexo-image-cloudflare",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Use Cloudflare to cache images in Hexo",
   "main": "index.js",
   "dependencies": {
