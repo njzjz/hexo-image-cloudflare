@@ -65,7 +65,7 @@ function source_tag(link, type = null) {
   return tag('source', obj);
 }
 
-hexo.extend.injector.register('head_begin', `<link rel="preconnect" href="${cdn_server}">`);
+hexo.extend.injector.register('head_end', `<link rel="preconnect" href="${cdn_server}">`);
 
 hexo.extend.filter.register('before_post_render', function (data) {
   const reg = /!\[(.*?)\]\((.*?)\)/g;
