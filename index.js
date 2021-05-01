@@ -84,6 +84,15 @@ hexo.extend.filter.register('after_post_render', function (data) {
   return data;
 });
 
+hexo.extend.filter.register('after_post_render', function (data) {
+  // replace object data
+  const reg = /<object(.*?)data="(.*?)"(.*?)>/gi;
+  data.content = data.content.replace(reg, function (str, p1, p2, p3) {
+    return util.format('<object%sdata="%s"%s>', p1, cdn_link(p2), p3);
+  });
+  return data;
+});
+
 if (use_webp || max_width) {
   hexo.extend.filter.register('after_render:html', function (htmlContent) {
     const reg = /<img(.*?)src="(.*?)"(.*?)>/gi;
