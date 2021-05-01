@@ -92,7 +92,7 @@ hexo.extend.filter.register('after_post_render', function (data) {
     return util.format('<img%ssrc="%s"%s>', p1, cdn_link(p2), p3);
   });
   return data;
-}, 8);
+}, -2);
 
 if (use_webp || max_width) {
   hexo.extend.filter.register('after_render:html', function (htmlContent) {
@@ -113,6 +113,6 @@ if (use_webp || max_width) {
 				${str.replace('<img', `<img webp-comp data-zoom-src="${p2}"`)}
 			</picture>`;
     });
-  }, 9);
+  }, -1);
 }
 
