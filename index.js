@@ -28,11 +28,12 @@ if (typeof max_width == "number") {
 max_widths.push(null);
 
 function cdn_link(link, output = null, width = null) {
+  link = unescapeHTML(link);
   if(exclude_domains && exclude_domains.some((domain) => link.startsWith(domain))){
     // skip using cdns
     return link;
   }
-  var obj = {
+  const obj = {
     url: full_url_for(link),
     default: full_url_for(link)
   }
@@ -51,11 +52,11 @@ function parse_url(link) {
 }
 
 function source_tag(link, type = null) {
-  var obj = {};
-  var urlwidth = [];
+  const obj = {};
+  const urlwidth = [];
   for (let ii = 0; ii < max_widths.length; ii++) {
     let new_link = cdn_link(link, output = type, width = max_widths[ii]);
-    var uw = max_widths[ii] ? `${new_link} ${max_widths[ii]}w` : new_link;
+    const uw = max_widths[ii] ? `${new_link} ${max_widths[ii]}w` : new_link;
     urlwidth.push(uw);
   }
   obj.srcset = urlwidth.join();
@@ -79,7 +80,7 @@ hexo.extend.filter.register('before_post_render', function (data) {
 hexo.extend.filter.register('after_post_render', function (data) {
   const reg = /background\-image:(\s*?)url\((.*?)\)/g;
   data.content = data.content.replace(reg, function (str, p1, p2) {
-    return util.format('background-image:%surl(%s)', p1, cdn_link(unescapeHTML(p2)));
+    return util.format('background-image:%surl(%s)', p1, cdn_link(p2));
   });
   return data;
 });
