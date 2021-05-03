@@ -29,7 +29,7 @@ max_widths.push(null);
 
 function cdn_link(link, output = null, width = null) {
   link = unescapeHTML(link);
-  if(exclude_domains && exclude_domains.some((domain) => link.startsWith(domain))){
+  if (exclude_domains && exclude_domains.some((domain) => link.startsWith(domain))) {
     // skip using cdns
     return link;
   }
@@ -94,13 +94,19 @@ hexo.extend.filter.register('after_post_render', function (data) {
   return data;
 }, -2);
 
-if (use_webp || max_width) {
-  hexo.extend.filter.register('after_render:html', function (htmlContent) {
-    const reg = /<img(.*?)(data\-)?src="(.*?)"(.*?)>/gi;
-    return htmlContent.replace(reg, function (str, p1, _, p2) {
-      if (/webp-comp/gi.test(p1) || !p2.startsWith(cdn_prefix)) {
-        return str;
-      }
+
+hexo.extend.filter.register('after_render:html', function (htmlContent) {
+  const reg = /<img(.*?)(data\-)?src="(.*?)"(.*?)>/gi;
+  return htmlContent.replace(reg, function (str, p1, _, p2) {
+    if (/webp-comp/gi.test(p1)) {
+      return str;
+    }
+    if (!p2.startsWith(cdn_prefix)) {
+      // add CDN
+      str = str.replace(p2, cdn_link(p2));
+      p2 = cdn_link(p2);
+    }
+    if (use_webp || max_width) {
       var link = parse_url(p2);
       var source_str = "";
       if (use_webp) {
@@ -112,7 +118,10 @@ if (use_webp || max_width) {
       return `<picture>${source_str}
 				${str.replace('<img', `<img webp-comp data-zoom-src="${p2}"`)}
 			</picture>`;
-    });
-  }, -1);
-}
+    } else {
+      return str;
+    }
+  });
+}, -1);
+
 
