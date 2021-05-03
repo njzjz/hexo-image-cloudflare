@@ -96,8 +96,8 @@ hexo.extend.filter.register('after_post_render', function (data) {
 
 if (use_webp || max_width) {
   hexo.extend.filter.register('after_render:html', function (htmlContent) {
-    const reg = /<img(.*?)src="(.*?)"(.*?)>/gi;
-    return htmlContent.replace(reg, function (str, p1, p2) {
+    const reg = /<img(.*?)(data\-)?src="(.*?)"(.*?)>/gi;
+    return htmlContent.replace(reg, function (str, p1, _, p2) {
       if (/webp-comp/gi.test(p1) || !p2.startsWith(cdn_prefix)) {
         return str;
       }
