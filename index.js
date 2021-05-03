@@ -103,8 +103,13 @@ hexo.extend.filter.register('after_render:html', function (htmlContent) {
     }
     if (!p2.startsWith(cdn_prefix)) {
       // add CDN
-      str = str.replace(p2, cdn_link(p2));
-      p2 = cdn_link(p2);
+      const new_url = cdn_link(p2);
+      if (new_url == p2) {
+        // skip if excluded
+        return str;
+      }
+      str = str.replace(p2, new_url);
+      p2 = new_url;
     }
     if (use_webp || max_width) {
       var link = parse_url(p2);
