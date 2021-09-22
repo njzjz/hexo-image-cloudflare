@@ -35,7 +35,7 @@ function cdn_link(link, output = null, width = null) {
     return link;
   }
   // exclude SVG
-  if (link.endswith(".svg")) return link;
+  if (link.endsWith(".svg")) return link;
   if (!native_resize) {
     const obj = {
       url: full_url_for(link),
