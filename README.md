@@ -46,6 +46,7 @@ Some other configurations are avaible.
 cdn:
   server: https://images.weserv.nl
   use_webp: false
+  native: false # use cloudflare native image resize
   max_width:
   exclude_domains:
 ```

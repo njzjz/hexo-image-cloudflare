@@ -10,7 +10,8 @@ const querystring = require('querystring');
 const tag = require('html-tag');
 const cdn_server = hexo.config.cdn_server || (hexo.config.cdn && hexo.config.cdn.server) || "https://images.weserv.nl";
 const cdn_prefix = cdn_server + "/?";
-const use_webp = hexo.config.cdn_use_webp || (hexo.config.cdn && hexo.config.cdn.use_webp) || false;
+const native_resize = hexo.config.native || false;
+const use_webp = !native_resize && hexo.config.cdn_use_webp || (hexo.config.cdn && hexo.config.cdn.use_webp) || false;
 const max_width = hexo.config.cdn && hexo.config.cdn.max_width;
 const exclude_domains = hexo.config.cdn && hexo.config.cdn.exclude_domains;
 const { unescapeHTML } = require('hexo-util');
@@ -33,18 +34,27 @@ function cdn_link(link, output = null, width = null) {
     // skip using cdns
     return link;
   }
-  const obj = {
-    url: full_url_for(link),
-    default: full_url_for(link)
+  if (!native_resize) {
+    const obj = {
+      url: full_url_for(link),
+      default: full_url_for(link)
+    }
+    if (output) {
+      obj.output = output;
+    }
+    if (width) {
+      obj.w = width;
+      obj.we = '';
+    }
+    return cdn_prefix + querystring.stringify(obj);
+  } else {
+    // native resize
+    var options = "";
+    if (width) {
+      options += `,fit=scale-down,w=${width}`;
+    }
+    return `/cdn-cgi/image/onerror=redirect,f=auto${options}/${link}`;
   }
-  if (output) {
-    obj.output = output;
-  }
-  if (width) {
-    obj.w = width;
-    obj.we = '';
-  }
-  return cdn_prefix + querystring.stringify(obj);
 }
 
 function parse_url(link) {
@@ -66,7 +76,8 @@ function source_tag(link, type = null) {
   return tag('source', obj);
 }
 
-hexo.extend.injector.register('head_end', `<link rel="preconnect" href="${cdn_server}">`);
+if (!native_resize)
+  hexo.extend.injector.register('head_end', `<link rel="preconnect" href="${cdn_server}">`);
 
 hexo.extend.filter.register('before_post_render', function (data) {
   const reg = /!\[(.*?)\]\((.*?)\)/g;
