@@ -58,7 +58,11 @@ function cdn_link(link, output = null, width = null) {
 }
 
 function parse_url(link) {
-  return url.parse(link, true).query.url;
+  if (!native_resize) {
+    return url.parse(link, true).query.url;
+  } else {
+    return link.replace('/cdn-cgi/image/onerror=redirect,f=auto/', '');
+  }
 }
 
 function source_tag(link, type = null) {
