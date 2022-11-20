@@ -4,7 +4,7 @@
   "description": "Use Cloudflare to cache images in Hexo",
   "main": "index.js",
   "dependencies": {
-    "hexo-util": "^2.2.0",
+    "hexo-util": "^3.0.0",
     "html-tag": "^2.0.0"
   }
 }
